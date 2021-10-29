@@ -1,0 +1,57 @@
+.sidebar {
+    float: left;
+    width: 25%;
+    padding: 10px;
+    background-color: #1e1f1c;
+    position: relative;
+    flex: 1 1 auto;
+    height: 100%
+}
+
+body {
+    font-family: 'Trebuchet MS', sans-serif;
+    background-color: #272822;
+    color: #dddddd;
+}
+
+.under-banner {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: row;
+    height: 100%;
+    align-items: stretch;
+}
+
+article {
+    width: 75%;
+    font-size: 17pt;
+    flex: 1 1 auto;
+}
+
+p {
+    font-weight: 100;
+}
+
+h2 {
+    font-size: 20pt;
+}
+
+a {
+    color: #dddddd;
+    text-decoration-style: dotted;
+}
+
+body,
+html {
+    padding: 0px;
+    margin: 0px;
+}
+
+.banner {
+    background-color: #38342c;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}

@@ -6,7 +6,6 @@ function autoResize(ele) {
         newheight = ele.contentWindow.document.body.scrollHeight;
         newwidth = ele.contentWindow.document.body.scrollWidth;
     }
-
-    ele.height = (newheight) + "px";
+    ele.height = "100%";
     ele.width = (newwidth) + "px";
 }

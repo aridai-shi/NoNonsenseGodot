@@ -1,0 +1,17 @@
+ul {
+    list-style: none;
+}
+
+body {
+    background-color: #1e1f1c;
+}
+
+ul li::before {
+    content: "\25AA";
+    color: #53554c;
+    font-weight: bold;
+    font-size: large;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
