@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://morgan3d.github.io/include.js/include.min.js"></script>
+    <script src="js/resize-iframe.js"></script>
     <title>no nonsense godot.</title>
 </head>
 
@@ -14,7 +14,7 @@
         <h1>no nonsense godot.</h1>
         <h2>Just tutorials that let you get things done.</h2>
     </div>
-    <include src="sidebar.html"></include>
+    <iframe src="sidebar.html" width="100%" height="200px" frameborder="0" onload="autoResize(this)"></iframe>
 </body>
 
 </html>
