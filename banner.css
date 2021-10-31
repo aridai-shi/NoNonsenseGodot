@@ -30,8 +30,10 @@ body:hover .blue {
     transition: 0.5s;
 }
 
-
+body {
+    height: 100px;
 }
+
 h2 {
     filter: unset
 }
