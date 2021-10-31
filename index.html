@@ -6,15 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="js/resize-iframe.js"></script>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <title>no nonsense godot.</title>
 </head>
 
 <body>
-    <div class="banner">
-        <h1>no nonsense godot.</h1>
-        <h2>Just tutorials that let you get things done.</h2>
-    </div>
+    <iframe src="banner.html" class="banner-wrapper" width="100%" height="95" frameborder="0" onload="autoResize(this)"></iframe>
     <div class="under-banner">
         <iframe src="sidebar.html" class="sidebar" width="100%" height="80%" frameborder="0" onload="autoResize(this)"></iframe>
         <article>

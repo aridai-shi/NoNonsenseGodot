@@ -1,9 +1,12 @@
 ul {
     list-style: none;
+    z-index: bottom
 }
 
 body {
     background-color: #1e1f1c;
+    overflow: hidden;
+    z-index: bottom;
 }
 
 ul li::before {
@@ -14,4 +17,5 @@ ul li::before {
     display: inline-block;
     width: 1em;
     margin-left: -1em;
+    z-index: bottom
 }

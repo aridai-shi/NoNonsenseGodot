@@ -3,9 +3,14 @@
     width: 25%;
     padding: 10px;
     background-color: #1e1f1c;
+    height: 100%;
     position: relative;
-    flex: 1 1 auto;
-    height: 100%
+    z-index: bottom;
+    box-shadow: inset 0 5px 6px -6px black;
+}
+
+h1 {
+    color: #66D9EF;
 }
 
 body {
@@ -14,19 +19,36 @@ body {
     color: #dddddd;
 }
 
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #1e1f1c;
+    border-radius: 12px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #474844;
+    border-radius: 12px;
+}
+
 .under-banner {
     display: flex;
     justify-content: center;
+    position: relative;
     align-content: center;
     flex-direction: row;
-    height: 100%;
+    height: 85%;
+    z-index: bottom;
     align-items: stretch;
 }
 
 article {
+    position: relative;
     width: 75%;
     font-size: 17pt;
-    flex: 1 1 auto;
+    padding-left: 11pt;
 }
 
 p {
@@ -46,12 +68,26 @@ body,
 html {
     padding: 0px;
     margin: 0px;
+    height: 100%;
+}
+
+.banner-wrapper {
+    display: flex;
+    overflow-y: hidden;
+    flex-direction: column;
+    z-index: top;
+    position: relative;
+    box-shadow: 0px 0px 4px black;
 }
 
 .banner {
     background-color: #38342c;
     display: flex;
+    line-height: 0.2;
     justify-content: center;
     align-content: center;
     flex-direction: column;
+    text-indent: 11pt;
+    position: relative;
+    z-index: top;
 }
