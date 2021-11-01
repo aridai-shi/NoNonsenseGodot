@@ -25,9 +25,9 @@
             <iframe src="reusable/sidebar.html" width="100%" height="80%" frameborder="0" onload="autoResize(this)"></iframe></div>
         <article>
             <h2>Introduction to Scenes and Nodes</h2>
-            <p>Nodes are the basic building blocks of a Godot project. Different parts of the game world will often be made up of several different Nodes. Some will be responsible for collision, others for visual effects, physics handling, etc. Nodes are
-                ordered in a tree structure - when Node A is put under Node B in the structure, we say Node A is Node B's <b>child Node</b>. Child Nodes' coordinates and angle are kept track of relative to their parents, making the two of them 'stick
-                together'. If you want to change a Node's absolute position/angle from code, use <samp>global_position</samp>/<samp>global_rotation</samp> instead of just <samp>position</samp>/<samp>rotation</samp>.
+            <p>Nodes are the basic building blocks of a Godot project. Different parts of the game world will often be made up of several different Nodes. Some will be responsible for collision, others for visual effects, physics handling, etc. Their class
+                (ex. KinematicBody2D, TextureProgress, CollisionShape) will determine their built-in functions and properties, streamlining programming by using the right Node for the right job (ex. KinematicBody2D has a <samp>move_and_slide()</samp>                function that lets' it move around while accounting for collision). Nodes are ordered in a tree structure - when Node A is put under Node B in the structure, we say Node A is Node B's <b>child Node</b>. Child Nodes inherit some of their
+                properties from their parent Nodes (ex. position, rotation, scale), only being able to change them in relation to their parents.
             </p>
             <div class="image-row width20">
                 <img src="img/siblings.png" alt="Node B is Node A's sibling" class="shadow-box">
@@ -43,7 +43,7 @@
             <div class="image-row">
                 <video src="vid/example-scenes.mp4" controls loop muted class="shadow-box video"></video>
             </div>
-            <p class="subtitle">EXAMPLE: By moving the <samp>CollisionShape2D</samp> in <samp>Player.tscn</samp>, we've affected all versions of it throughout the game.</p>
+            <p class="subtitle">EXAMPLE: By moving the CollisionShape2D in <samp>Player.tscn</samp>, we've affected all versions of it throughout the game.</p>
             <p>The ability to make tons of copies of different Node setups without clogging up the tree and to change the object once instead of manually changing each copy makes Scenes an essential tool for any Godot game developer.</p>
             <p>While this is a pretty basic tutorial for this website, many people have requested one on this subject.</p>
         </article>
