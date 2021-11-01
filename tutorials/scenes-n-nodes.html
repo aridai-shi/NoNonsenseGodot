@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <base href="../">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/resize.js"></script>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/png">
+    <link rel="stylesheet" href="reusable/style.css">
+    <style>
+        .width20 img,
+        img.width20 {
+            width: 20%
+        }
+    </style>
+    <title>no nonsense godot.</title>
+</head>
+
+<body>
+    <iframe src="reusable/banner.html" class="banner-wrapper" width="100%" height="95" frameborder="0" onload="autoResize(this)"></iframe>
+    <div class="under-banner">
+        <div class="bar-wrapper">
+            <iframe src="reusable/sidebar.html" width="100%" height="80%" frameborder="0" onload="autoResize(this)"></iframe></div>
+        <article>
+            <h2>Introduction to Scenes and Nodes</h2>
+            <p>Nodes are the basic building blocks of a Godot project. Different parts of the game world will often be made up of several different Nodes. Some will be responsible for collision, others for visual effects, physics handling, etc. Nodes are
+                ordered in a tree structure - when Node A is put under Node B in the structure, we say Node A is Node B's <b>child Node</b>. Child Nodes' coordinates and angle are kept track of relative to their parents, making the two of them 'stick
+                together'. If you want to change a Node's absolute position/angle from code, use <samp>global_position</samp>/<samp>global_rotation</samp> instead of just <samp>position</samp>/<samp>rotation</samp>.
+            </p>
+            <div class="image-row width20">
+                <img src="img/siblings.png" alt="Node B is Node A's sibling" class="shadow-box">
+                <img src="img/parent-child.png" alt="Node B is Node A's child" class="shadow-box">
+            </div>
+            <p class="subtitle">In the left picture, Node B is Node A's sibling. In the right pic Node B is Node A's child. Know the difference!</p>
+            <p>Child Nodes are also used by parent Nodes as components (ex. an Area2D Node using a CollisionShape2D child Node for collision). To use a child Node within the parent's script, use <samp>$ChildNodeName</samp>.</p>
+            <div class="image-row width20">
+                <img src="img/example-parenting.png" alt="Example of how to set up a player" class="shadow-box">
+            </div>
+            <p class="subtitle">EXAMPLE: To mess with the <samp>HandSprite</samp> Node from <samp>Player</samp>'s script, you gotta call <samp>$HandArea/HandSprite</samp>.</p>
+            <p>Scenes are just Nodes saved as files. You can copy-paste the Scene all around a project, and when you change the Scene's file directly, the changes will be applied to all instances of said Scene immediately.</p>
+            <div class="image-row">
+                <video src="vid/example-scenes.mp4" controls loop muted class="shadow-box video"></video>
+            </div>
+            <p class="subtitle">EXAMPLE: By moving the <samp>CollisionShape2D</samp> in <samp>Player.tscn</samp>, we've affected all versions of it throughout the game.</p>
+            <p>The ability to make tons of copies of different Node setups without clogging up the tree and to change the object once instead of manually changing each copy makes Scenes an essential tool for any Godot game developer.</p>
+            <p>While this is a pretty basic tutorial for this website, many people have requested one on this subject.</p>
+        </article>
+    </div>
+</body>
+
+</html>
