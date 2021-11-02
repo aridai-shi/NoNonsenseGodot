@@ -9,9 +9,18 @@
     <script src="js/resize.js"></script>
     <link rel="shortcut icon" href="img/favicon.png" type="image/png">
     <link rel="stylesheet" href="reusable/style.css">
+    <link rel="stylesheet" href="reusable/highlight.css">
+    <script src="js/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
     <title>no nonsense godot.</title>
+    <style>
+        .width40 img {
+            width: 40%
+        }
+    </style>
 </head>
-
 
 <body>
     <iframe src="reusable/banner.html" class="banner-wrapper" width="100%" height="95" frameborder="0" onload="autoResize(this)"></iframe>
@@ -20,7 +29,65 @@
             <iframe src="reusable/sidebar.html" width="100%" height="80%" frameborder="0" onload="autoResize(this)"></iframe></div>
         <article>
             <h2>2D platformer gamefeel improvements</h2>
-            <p>The player controller in your 2D platformer is probably janky. Let's fix that. <br> Create a new scene, with <span>KinematicBody2d</span> as the root node. Set it up like this:</p>
+            <p>Here's how to make a 2D platformer player that feels better. Create a new scene, with <samp>KinematicBody2D</samp> as the root node. Set it up like this:</p>
+            <div class="width40 image-row">
+                <img src="img/example-player.png" alt="example player setup" class="shadow-box">
+            </div>
+            <p class="subtitle">The art can be whatever you want at this stage, it's just placeholder. <samp>JumpBufferTimer</samp> and <samp>CoyoteTimer</samp> are <samp>Timer</samp> Nodes, in case it wasn't obvious.</p>
+            <p>Make sure <samp>JumpBufferTimer</samp> and <samp>CoyoteTimer</samp> are both set to <i>One Shot</i>, otherwise there <b>will</b> be jank. Set <samp>Camera2D</samp> to <i>Current</i>.
+                <br> Attach a script to the <samp>Player</samp> Node, and put this inside. Refer to the comments to see what is what.</p>
+            <pre><code class="language-swift shadowbox">extends KinematicBody2D
+# Godot smooth platformer code by aridai.
+var run_speed = 60
+var jump_speed = -800
+var gravity = 1200
+var velocity = Vector2()
+var jumping = false
+var dir = true
+var speed_cap = 1200;
+func get_input():
+	var horiz =  Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left") # simplified left-right check
+	var jump = Input.is_action_just_pressed('ui_up')
+	var jumpnt = Input.is_action_just_released('ui_up') #for variable jump height
+	velocity.x = velocity.x*0.95 # friction instead of just stopping
+	if is_on_floor():
+		$CoyoteTimer.start(0.15) # will still allow jumping for 0.15s after leaving floor - what we in the biz call "coyote time"
+	if jump:
+		$JumpBufferTimer.start(0.15) # will still register jump if we hit the jump button 0.15s before we touch the floor - combined with coyote time, it makes the jumping a lot more responsive
+	if jumpnt && velocity.y < 0:
+		velocity.y = velocity.y*0.55 # cuts the vertical velocity in half if you let go of jump and are still going up - gives us variable jump height
+	if !jumping and $JumpBufferTimer.time_left > 0 and $CoyoteTimer.time_left > 0:
+		jumping = true
+		velocity.y = jump_speed
+	if (horiz<0):
+		dir=false
+	elif (horiz>0):
+		dir=true
+	$Sprite.flip_h = !dir
+	velocity.x+=horiz*run_speed
+	velocity.x = clamp(velocity.x,-speed_cap,speed_cap) # speed caps so you don't go too fast
+
+func _physics_process(delta):
+	get_input()
+	velocity.y += gravity *delta
+	if jumping and is_on_floor():
+		jumping = false
+	velocity = move_and_slide(velocity, Vector2(0, -1))
+</code></pre>
+            <p class="subtitle">The full code.</p>
+            <p>This will add:
+                <ul>
+                    <li>jump input buffering - removing the feeling of your jumps getting "eaten" because you hit jump a bit too soon,</li>
+                    <li>coyote time - letting the player jump off a bit later,</li>
+                    <li>friction and speed caps - to let your player build up momentum, but not too much,</li>
+                    <li>variable length jumps - allowing for more expression with platforming.</li>
+                </ul>
+                Pop it into your level and see how it plays!</p>
+            <div class="image-row">
+                <video src="vid/example-platformer.mp4" controls loop muted class="shadow-box video"></video>
+            </div>
+            <p class="subtitle">The setup above in action.</p>
+            <p> This script is not the be-all-end-all of platformer characters, but if you're looking to get started on your platformer quickly, here's how.</p>
         </article>
     </div>
 </body>

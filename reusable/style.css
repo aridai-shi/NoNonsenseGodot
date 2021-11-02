@@ -96,9 +96,27 @@ body::-webkit-scrollbar-thumb {
     border-radius: 12px;
 }
 
-p {
+p,
+td {
     font-weight: 100;
     line-height: 25pt;
+}
+
+table,
+td,
+tr {
+    border-collapse: collapse;
+    border: #dddddd 2px solid;
+}
+
+table {
+    text-align: center;
+}
+
+td,
+tr {
+    margin: 11pt;
+    padding: 5pt;
 }
 
 p.subtitle {
@@ -107,8 +125,28 @@ p.subtitle {
     text-align: center;
 }
 
+td.no {
+    color: #F92672;
+}
+
+td.ip {
+    color: #e6db74
+}
+
+td.fi {
+    color: #a6e22e
+}
+
 samp {
     background-color: #1e1f1c;
+    color: #fd971f
+}
+
+pre {
+    margin-left: 10pt;
+    background-color: #22231f;
+    font-size: small;
+    color: #cccccc
 }
 
 h2 {
