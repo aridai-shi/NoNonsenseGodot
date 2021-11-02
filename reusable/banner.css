@@ -34,6 +34,21 @@ body {
     height: 100px;
 }
 
+@keyframes slidein {
+    from {
+        left: -100%;
+    }
+    to {
+        left: 0%;
+    }
+}
+
 h2 {
     filter: unset
+}
+
+.banner,
+img {
+    animation-name: slidein;
+    animation-duration: 2s;
 }
