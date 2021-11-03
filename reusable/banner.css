@@ -44,7 +44,10 @@ body {
 }
 
 h2 {
-    filter: unset
+    filter: unset;
+    white-space: nowrap;
+    margin-top: 0px;
+    line-height: 1em;
 }
 
 .banner,
