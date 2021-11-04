@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <base href="../">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/resize.js"></script>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/png">
+    <link rel="stylesheet" href="reusable/style.css">
+
+    <link rel="stylesheet" href="reusable/style.css">
+    <link rel="stylesheet" href="reusable/highlight.css">
+    <script src="js/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+    <title>no nonsense godot.</title>
+</head>
+
+
+<body>
+    <iframe src="reusable/banner.html" class="banner-wrapper" width="100%" height="95" frameborder="0"></iframe>
+    <div class="under-banner">
+        <div class="bar-wrapper">
+            <iframe src="reusable/sidebar.html" width="100%" height="80%" frameborder="0"></iframe></div>
+        <article>
+            <h2>Roguelike level generation</h2>
+            <p>Inspired by <a href="https://store.steampowered.com/app/278620/TinyKeep/">TinyKeep's level generation algorithm</a> and <a href="">KCC's tutorial on the subject
+            </a>. Check the latter out for better insight into how this code works!</p>
+            <p>Open a new Godot project. Make a <samp>Tileset</samp> with an <samp>Autotile</samp> that can automatically update to make the corridors look natural, so that we can update visuals from the code easily.</p>
+            <div class="image-row">
+                <img src="img/tileset.png" alt="tileset" class="shadow-box" style="width:40%"></div>
+            <p class="subtitle">An image like this can easily be generated with <a href="https://led.itch.io/tilesetter">Tilesetter Lite</a>, and then it's just a matter of setting up the bitmask correctly.</p>
+            <p> Set <samp>physics/2d/default_gravity</samp> to 0 in <i>Project Settings</i> and let's get started with...</p>
+            <h2>I. ROOM OUTLINE</h2>
+            <p>We're gonna make an outline of the rooms via random generation and physics. Make a <samp>RigidBody2D</samp> Scene and name it <i>Room</i>. Give it a <samp>CollisionShape2D</samp> child, but don't give it a shape yet. Set the <samp>RigidBody2D</samp>'s
+                Mode to <i>Character</i> and attach a script:</p>
+            <pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;">extends RigidBody2D
+
+var size
+
+func make_room(_pos, _size):
+	position = _pos
+	size = _size
+	var s = RectangleShape2D.new()
+	s.custom_solver_bias = 0.75
+	s.extents = size
+	$CollisionShape2D.shape = s
+</code></pre>
+            <p>Make a new <samp>Node2D</samp> Scene, call it <i>Main</i>, and give it a <samp>Node</samp> child called <i>Rooms</i> to contain all of our rooms. Give <i>Main</i> this script:</p>
+            <pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;">extends Node2D
+
+var Room = preload("res://Room.tscn")
+
+var tile_size = 16  # size of a tile in the tileset
+var num_rooms = 50  # number of rooms to generate
+var min_size = 4  # minimum room size (in tiles)
+var max_size = 10  # maximum room size (in tiles)extends Node2D
+var hspread = 400  # horizontal spread - the bigger, the more horizontal the map is
+var vspread= 400  # vertical spread - the bigger, the more vertical the map is
+var cull = 0.4 # chance to cull room 
+
+func _ready():
+	randomize()
+	make_rooms()
+	
+func make_rooms():
+	for i in range(num_rooms):
+		var pos = Vector2(rand_range(-hspread, hspread), rand_range(-vspread, vspread))
+		var r = Room.instance()
+		var w = min_size + randi() % (max_size - min_size)
+		var h = min_size + randi() % (max_size - min_size)
+		r.make_room(pos, Vector2(w, h) * tile_size)
+		$Rooms.add_child(r)
+	# wait for movement to stop
+	yield(get_tree().create_timer(1.1), 'timeout')
+	# cull rooms
+	for room in $Rooms.get_children():
+		if randf() < cull:
+			room.queue_free()
+		else:
+			room.mode = RigidBody2D.MODE_STATIC # saves on processing power once all the rooms are in position
+</code></pre>
+            <p class="subtitle">Confused? Try enabling 'Visible Collision Shapes' in Debug, making a <span>Camera2D</span> with zoom 10 and launching the Main scene.</p>
+            <p>And we're done with generating the basic outline of the rooms!</p>
+            <h2>II. CONNECTIONS</h2>
+            <p>Now, time to figure out the connections between these rooms. We'll use an MST to make a graph connecting all of these rooms. Add a variable called <samp>path</samp> to the start of the <samp>Main.gd</samp> script, and replace the code right
+                after <samp>yield(get_tree().create_timer(1.1), 'timeout')</samp> with:<pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;"># cull rooms
+	var room_positions = []
+	for room in $Rooms.get_children():
+		if randf() < cull:
+			room.queue_free()
+		else:
+			room.mode = RigidBody2D.MODE_STATIC # saves on processing power once all the rooms are in position
+			room_positions.append(Vector3(room.position.x, room.position.y, 0))
+	yield(get_tree(), 'idle_frame')
+# generate spanning tree (path)
+	path = find_mst(room_positions)
+
+func find_mst(nodes):
+    # Prim's algorithm - generates an A* object with an MST connecting an array of positions
+    var path = AStar.new()
+    path.add_point(path.get_available_point_id(), nodes.pop_front())
+    while nodes:
+        var min_dist = INF  
+        var min_p = null 
+        var p = null
+        for p1 in path.get_points():
+            p1 = path.get_point_position(p1)
+            for p2 in nodes:
+                if p1.distance_to(p2) < min_dist:
+                    min_dist = p1.distance_to(p2)
+                    min_p = p2
+                    p = p1
+        var n = path.get_available_point_id()
+        path.add_point(n, min_p)
+        path.connect_points(path.get_closest_point(p), n)
+        nodes.erase(min_p)
+	# For a better explaination of what's going on here, check out KCC's tutorial (which NNG's tutorial is partially based off).
+    return path</code></pre></p>
+            <p class="subtitle">Again, to get a better image of the situation, feel free to setup a debug draw between all of the <samp>AStar</samp>'s points and connections.</p>
+            <h2>III. TILES</h2>
+            <p>Now it's all gonna come together into a dungeon that a theoretical player can actually traverse. Add a <samp>TileMap</samp> Node to <i>Main</i> and give it the previously made <samp>Tileset</samp> resource. Remember to set the right cell size,
+                so each tileset tile fills one tile on the map. Add <span>signal finish_mst</span> to the variables at the start of <samp>Main.gd</samp> and connect it to a function called <samp>make_map</samp>, we're gonna write it. Add <samp>emit_signal("finish_mst")</samp>                to the end of the <samp>find_mst</samp> function and finish things off with this bit of code:</p> <pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;">func make_map():
+	$TileMap.clear()
+	yield(get_tree(), 'idle_frame') # wait to make sure we have the mst
+	var full_rect = Rect2()
+	for room in $Rooms.get_children():
+		var r = Rect2(room.position-room.size,
+					room.get_node("CollisionShape2D").shape.extents*2)
+		full_rect = full_rect.merge(r)
+	var topleft = $TileMap.world_to_map(full_rect.position)
+	var bottomright = $TileMap.world_to_map(full_rect.end)
+	for x in range(topleft.x, bottomright.x):
+		for y in range(topleft.y, bottomright.y):
+			$TileMap.set_cell(x, y, 0)
+	var corridors = []  # One corridor per connection
+	for room in $Rooms.get_children():
+		var s = (room.size / tile_size).floor()
+		var pos = $TileMap.world_to_map(room.position)
+		var ul = (room.position/tile_size).floor() - s
+		for x in range(2, s.x * 2-1):
+			for y in range(2, s.y * 2-1):
+				$TileMap.set_cell(ul.x+x, ul.y+y, 1)
+
+		# Carve corridors
+		var p = path.get_closest_point(Vector3(room.position.x,
+									room.position.y, 0))
+		for conn in path.get_point_connections(p):
+			if not conn in corridors:
+				var start = $TileMap.world_to_map(Vector2(path.get_point_position(p).x, path.get_point_position(p).y))
+				var end = $TileMap.world_to_map(Vector2(path.get_point_position(conn).x, path.get_point_position(conn).y))
+				carve_path(start, end)
+		corridors.append(p)
+	$TileMap.update_bitmask_region()
+
+func carve_path(pos1, pos2):
+	var x_diff = sign(pos2.x - pos1.x)
+	var y_diff = sign(pos2.y - pos1.y)
+	if x_diff == 0: x_diff = pow(-1.0, randi() % 2)
+	if y_diff == 0: y_diff = pow(-1.0, randi() % 2)
+	var x_y = pos1
+	var y_x = pos2
+	if (randi() % 2) > 0:
+		x_y = pos2
+		y_x = pos1
+	for x in range(pos1.x, pos2.x, x_diff):
+		$TileMap.set_cell(x, x_y.y, 1)
+		$TileMap.set_cell(x, x_y.y+y_diff, 1)  
+	for y in range(pos1.y, pos2.y, y_diff):
+		$TileMap.set_cell(y_x.x, y, 1)
+		$TileMap.set_cell(y_x.x+x_diff, y, 1) </code></pre>
+            <p class="subtitle">This is the final bit of code that will carve the dungeon out of a block of the tiles you've made earlier.</p>
+            <p>Now boot up that project, aaaaand...</p>
+            <div class="image-row">
+                <video src="vid/example-level-gen.mp4" controls loop muted class="shadow-box video"></video>
+            </div>
+            <p class="subtitle">Voilla! Your first generated roguelike level!</p>
+            <h2>CHALLENGE: MAKE THIS INTO A ROGUELIKE</h2>
+            <p>Now's your turn! You know how to generate a roguelike dungeon now, but can you figure out how to make the player and enemies spawn properly? Try to make this little demo into an actual game.</p>
+            <a href="tutorials/roguelike-files/Main.gd"><i>(also, in case you got lost earlier, here's the full <samp>Main.gd</samp> script we've written today! have fun, go wild)</i></a>
+            <footer>
+                <p class="subtitle">2021 © aridai-shi</p>
+            </footer>
+        </article>
+    </div>
+
+</body>
+
+</html>

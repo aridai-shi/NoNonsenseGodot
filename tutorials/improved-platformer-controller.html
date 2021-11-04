@@ -15,11 +15,6 @@
         hljs.highlightAll();
     </script>
     <title>no nonsense godot.</title>
-    <style>
-        .width40 img {
-            width: 40%
-        }
-    </style>
 </head>
 
 <body>
@@ -30,7 +25,7 @@
         <article>
             <h2>2D platformer gamefeel improvements</h2>
             <p>Here's how to make a 2D platformer player that feels better. Create a new scene, with <samp>KinematicBody2D</samp> as the root node. Set it up like this:</p>
-            <div class="width40 image-row">
+            <div class="image-row" style="width: 40%">
                 <img src="img/example-player.png" alt="example player setup" class="shadow-box">
             </div>
             <p class="subtitle">The art can be whatever you want at this stage, it's just placeholder. <samp>JumpBufferTimer</samp> and <samp>CoyoteTimer</samp> are <samp>Timer</samp> Nodes, in case it wasn't obvious.</p>
@@ -88,10 +83,10 @@ func _physics_process(delta):
             </div>
             <p class="subtitle">The setup above in action.</p>
             <p> This script is not the be-all-end-all of platformer characters, but if you're looking to get started on your platformer quickly, here's how.</p>
+            <footer>
+                <p class="subtitle">2021 © aridai-shi</p>
+            </footer>
         </article>
-        <footer>
-            <p class="subtitle">2021 © aridai-shi</p>
-        </footer>
     </div>
 </body>
 
