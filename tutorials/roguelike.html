@@ -123,7 +123,7 @@ func find_mst(nodes):
             <p class="subtitle">Again, to get a better image of the situation, feel free to setup a debug draw between all of the <samp>AStar</samp>'s points and connections.</p>
             <h2>III. TILES</h2>
             <p>Now it's all gonna come together into a dungeon that a theoretical player can actually traverse. Add a <samp>TileMap</samp> Node to <i>Main</i> and give it the previously made <samp>Tileset</samp> resource. Remember to set the right cell size,
-                so each tileset tile fills one tile on the map. Add <span>signal finish_mst</span> to the variables at the start of <samp>Main.gd</samp> and connect it to a function called <samp>make_map</samp>, we're gonna write it. Add <samp>emit_signal("finish_mst")</samp>                to the end of the <samp>find_mst</samp> function and finish things off with this bit of code:</p> <pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;">func make_map():
+                so each tileset tile fills one tile on the map. Add <samp>signal finish_mst</samp> to the variables at the start of <samp>Main.gd</samp> and connect it to a function called <samp>make_map</samp>, we're gonna write it. Add <samp>emit_signal("finish_mst")</samp>                to the end of the <samp>find_mst</samp> function and finish things off with this bit of code:</p> <pre style="width: 15%;left:22px;position: relative;"><code class="language-swift shadow-box" style="width:620%;">func make_map():
 	$TileMap.clear()
 	yield(get_tree(), 'idle_frame') # wait to make sure we have the mst
 	var full_rect = Rect2()
